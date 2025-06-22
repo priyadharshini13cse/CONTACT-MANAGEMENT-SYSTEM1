@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Contact Manager</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: url('https://resources.sansan.com/hubfs/Imported_Blog_Media/Contact-Management.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: white;
+    }
+
+    .navbar {
+      position: sticky;
+      top: 0;
+      background-color: rgba(255,255,255,0.8);
+      display: flex;
+      justify-content: flex-end;
+      padding: 20px;
+    }
+
+    .navbar a {
+      margin: 0 15px;
+      color: #007BFF;
+      font-weight: 500;
+      text-decoration: none;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 100px auto;
+      padding: 30px;
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: center;
+      background: rgba(255,255,255,0.15);
+      margin: 10px 0;
+      padding: 15px 20px;
+      border-radius: 10px;
+      justify-content: space-between;
+    }
+
+    .contact-info {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-grow: 1;
+    }
+
+    .contact-info i {
+      color: #007BFF;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .contact-details {
+      color: #f0f0f0;
+    }
+
+    .form-section {
+      display: none;
+      margin-top: 40px;
+    }
+
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    input {
+      background-color: rgba(255, 255, 255, 0.9);
+      color: #333;
+    }
+
+    button {
+      background-color: #007BFF;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .fab {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      font-size: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      cursor: pointer;
+      z-index: 100;
+    }
+
+    .fab-menu {
+      position: absolute;
+      bottom: 80px;
+      right: 0;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      display: none;
+      flex-direction: column;
+      min-width: 250px;
+      overflow: hidden;
+      z-index: 101;
+    }
+
+    .fab-menu button {
+      background: white;
+      border: none;
+      color: #333;
+      padding: 18px 24px;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      border-bottom: 1px solid #eee;
+      transition: background 0.2s;
+    }
+
+    .fab-menu button i {
+      font-size: 20px;
+      margin-right: 12px;
+      color: #007BFF;
+    }
+
+    .fab-menu button:hover {
+      background-color: #f2f2f2;
+    }
+
+    @media (max-width: 600px) {
+      .fab {
+        width: 50px;
+        height: 50px;
+        font-size: 26px;
+      }
+
+      .fab-menu {
+        min-width: 200px;
+      }
+
+      .fab-menu button {
+        font-size: 16px;
+        padding: 14px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <div class="navbar">
+    <a href="home.html">Home</a>
+    <a href="contact.html">Contacts</a>
+    <a href="search.html">Search</a>
+  </div>
+
+  <!-- Main Container -->
+  <div class="container">
+    <h2>Your Contacts</h2>
+    <div id="contactsList"></div>
+
+    <!-- Hidden Form Section -->
+    <div class="form-section" id="formSection">
+      <h3 id="formTitle">Edit Contact</h3>
+      <form onsubmit="handleFormSubmit(event)">
+        <input type="text" id="name" placeholder="Name" required />
+        <input type="email" id="email" placeholder="Email" required />
+        <input type="text" id="phone" placeholder="Phone" required />
+        <button type="submit">Save Changes</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Floating Action Button -->
+   <div class="fab" id="fab">
+    <i class="fas fa-plus"></i>
+    <div class="fab-menu" id="fabMenu">
+      <button onclick="location.href='addcontact.html'"><i class="fas fa-user-plus"></i> Add Contact</button>
+      <button onclick="location.href='edit.html'"><i class="fas fa-edit"></i> Edit Contact</button>
+      <button onclick="location.href='blocked.html'"><i class="fas fa-ban"></i> Blocked Contacts</button>
+      <button onclick="location.href='delete.html'"><i class="fas fa-trash-alt"></i> Recently Deleted</button>
+    </div>
+  </div>
+
+  <script>
+    let contacts = JSON.parse(localStorage.getItem('contacts')) || [];
+    let editingIndex = null;
+    const formSection = document.getElementById('formSection');
+
+    function renderContacts() {
+      const list = document.getElementById('contactsList');
+      list.innerHTML = '';
+      contacts.forEach((contact, index) => {
+        const item = document.createElement('div');
+        item.className = 'contact-item';
+        item.innerHTML = `
+          <div class="contact-info">
+            <i class="fas fa-edit" onclick="editContact(${index})"></i>
+            <div class="contact-details">
+              <strong>${contact.name}</strong><br>
+              ${contact.email}<br>
+              ${contact.phone}
+            </div>
+          </div>
+        `;
+        list.appendChild(item);
+      });
+    }
+
+    function editContact(index) {
+      const contact = contacts[index];
+      document.getElementById('name').value = contact.name;
+      document.getElementById('email').value = contact.email;
+      document.getElementById('phone').value = contact.phone;
+      editingIndex = index;
+      document.getElementById('formTitle').innerText = 'Edit Contact';
+      formSection.style.display = 'block';
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }
+
+    function addNewContact() {
+      document.getElementById('formTitle').innerText = 'Add Contact';
+      document.getElementById('name').value = '';
+      document.getElementById('email').value = '';
+      document.getElementById('phone').value = '';
+      editingIndex = null;
+      formSection.style.display = 'block';
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }
+
+    function handleFormSubmit(event) {
+      event.preventDefault();
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const phone = document.getElementById('phone').value;
+
+      if (editingIndex !== null) {
+        contacts[editingIndex] = { name, email, phone };
+      } else {
+        contacts.push({ name, email, phone });
+      }
+
+      localStorage.setItem('contacts', JSON.stringify(contacts));
+      formSection.style.display = 'none';
+      renderContacts();
+    }
+
+    // FAB menu toggle
+    const fab = document.getElementById('fab');
+    const fabMenu = document.getElementById('fabMenu');
+
+    fab.addEventListener('click', function (e) {
+      e.stopPropagation();
+      fabMenu.style.display = fabMenu.style.display === 'flex' ? 'none' : 'flex';
+    });
+
+    window.addEventListener('click', function () {
+      fabMenu.style.display = 'none';
+    });
+
+    renderContacts();
+  </script>
+
+</body>
+</html>

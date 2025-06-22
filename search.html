@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Search Contacts</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: url('https://resources.sansan.com/hubfs/Imported_Blog_Media/Contact-Management.jpg') no-repeat center center fixed;
+      background-size: cover;
+      margin: 0;
+      padding: 0;
+      color: white;
+    }
+
+    .navbar {
+      position: absolute;
+      top: 0;
+      width: 100%;
+      display: flex;
+      justify-content: flex-end;
+      background-color: rgba(255, 255, 255, 0.8);
+      padding: 20px;
+      z-index: 10;
+    }
+
+    .navbar a {
+      color: #007BFF;
+      text-decoration: none;
+      margin: 0 15px;
+      font-weight: 500;
+      font-size: 18px;
+    }
+
+    .navbar a:hover {
+      text-decoration: underline;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 100px auto;
+      padding: 20px;
+      background: rgba(0, 0, 0, 0.6);
+      border-radius: 12px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #fff;
+    }
+
+    .search-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .search-container input {
+      padding: 10px;
+      font-size: 16px;
+      width: 80%;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    .contact-card {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      position: relative;
+      color: #000;
+    }
+
+    .contact-card h3 {
+      margin: 0 0 10px;
+    }
+
+    .contact-card p {
+      margin: 5px 0;
+    }
+
+    .delete-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: none;
+      border: none;
+      color: red;
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    .fab {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      font-size: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 0 12px rgba(0,0,0,0.3);
+      cursor: pointer;
+      z-index: 100;
+    }
+
+    .fab-menu {
+      position: absolute;
+      bottom: 80px;
+      right: 0;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      display: none;
+      flex-direction: column;
+      min-width: 250px;
+      overflow: hidden;
+      z-index: 101;
+    }
+
+    .fab-menu button {
+      background: white;
+      border: none;
+      color: #333;
+      padding: 18px 24px;
+      font-size: 20px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      border-bottom: 1px solid #eee;
+      transition: background 0.2s;
+    }
+
+    .fab-menu button i {
+      font-size: 22px;
+      margin-right: 12px;
+      color: #007BFF;
+    }
+
+    .fab-menu button:hover {
+      background-color: #f2f2f2;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <div class="navbar">
+    <a href="home.html"><i class="fas fa-home"></i> Home</a>
+    <a href="contact.html"><i class="fas fa-address-book"></i> Contacts</a>
+    <a href="search.html"><i class="fas fa-search"></i> Search</a>
+  </div>
+
+  <div class="container">
+    <h1>Search Contacts</h1>
+
+    <!-- Search Container -->
+    <div class="search-container">
+      <input type="text" id="searchInput" placeholder="Search Contacts..." onkeyup="searchContacts()">
+    </div>
+
+    <!-- Contact List -->
+    <div id="contactList"></div>
+  </div>
+
+  <!-- Floating + Button with Menu -->
+  <div class="fab" id="fab">
+    <i class="fas fa-plus"></i>
+    <div class="fab-menu" id="fabMenu">
+      <button onclick="openModal()"><i class="fas fa-user-plus"></i> Add Contact</button>
+      <button onclick="location.href='edit.html'"><i class="fas fa-edit"></i> Edit Contact</button>
+      <button onclick="location.href='blocked.html'"><i class="fas fa-ban"></i> Blocked Contacts</button>
+      <button onclick="location.href='delete.html'"><i class="fas fa-trash-alt"></i> Recently Deleted</button>
+    </div>
+  </div>
+
+  <script>
+    const contactList = document.getElementById('contactList');
+    const searchInput = document.getElementById('searchInput');
+    const fab = document.getElementById('fab');
+    const fabMenu = document.getElementById('fabMenu');
+    let contacts = JSON.parse(localStorage.getItem('contacts')) || [];
+
+    function renderContacts(filteredContacts) {
+      contactList.innerHTML = '';
+
+      if (filteredContacts.length === 0) {
+        contactList.innerHTML = '<p style="text-align:center;">No contacts found.</p>';
+        return;
+      }
+
+      filteredContacts.sort((a, b) => a.name.localeCompare(b.name));
+
+      filteredContacts.forEach((contact, index) => {
+        const card = document.createElement('div');
+        card.className = 'contact-card';
+        card.innerHTML = `
+          <h3>${contact.name}</h3>
+          <p><strong>Phone:</strong> ${contact.phone}</p>
+          <p><strong>Email:</strong> ${contact.email || 'N/A'}</p>
+          <button class="delete-btn" onclick="deleteContact(${index})"><i class="fas fa-trash"></i></button>
+        `;
+        contactList.appendChild(card);
+      });
+    }
+
+    function searchContacts() {
+      const searchTerm = searchInput.value.toLowerCase();
+      const filteredContacts = contacts.filter(contact => 
+        contact.name.toLowerCase().includes(searchTerm) ||
+        contact.phone.includes(searchTerm) ||
+        (contact.email && contact.email.toLowerCase().includes(searchTerm))
+      );
+      renderContacts(filteredContacts);
+    }
+
+    function deleteContact(index) {
+      if (confirm('Are you sure you want to delete this contact?')) {
+        contacts.splice(index, 1);
+        localStorage.setItem('contacts', JSON.stringify(contacts));
+        renderContacts(contacts);
+      }
+    }
+
+    fab.addEventListener('click', function (e) {
+      e.stopPropagation();
+      fabMenu.style.display = fabMenu.style.display === 'flex' ? 'none' : 'flex';
+    });
+
+    window.addEventListener('click', function () {
+      fabMenu.style.display = 'none';
+    });
+
+    renderContacts(contacts);
+  </script>
+
+</body>
+</html>

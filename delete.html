@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Recently Deleted</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: url('https://resources.sansan.com/hubfs/Imported_Blog_Media/Contact-Management.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: white;
+    }
+
+    .navbar {
+      position: sticky;
+      top: 0;
+      background-color: rgba(255,255,255,0.8);
+      display: flex;
+      justify-content: flex-end;
+      padding: 20px;
+    }
+
+    .navbar a {
+      margin: 0 15px;
+      color: #007BFF;
+      font-weight: 500;
+      text-decoration: none;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 100px auto;
+      padding: 30px;
+      background: rgba(0,0,0,0.6);
+      border-radius: 15px;
+    }
+
+    .contact-item {
+      background: rgba(255,255,255,0.9);
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 10px;
+      color: #000;
+    }
+
+    .fab {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      font-size: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 0 12px rgba(0,0,0,0.3);
+      cursor: pointer;
+      z-index: 100;
+    }
+
+    .fab-menu {
+      position: absolute;
+      bottom: 80px;
+      right: 0;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      display: none;
+      flex-direction: column;
+      min-width: 250px;
+      overflow: hidden;
+      z-index: 101;
+    }
+
+    .fab-menu button {
+      background: white;
+      border: none;
+      color: #333;
+      padding: 18px 24px;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      border-bottom: 1px solid #eee;
+    }
+
+    .fab-menu button i {
+      font-size: 20px;
+      margin-right: 12px;
+      color: #007BFF;
+    }
+
+    .fab-menu button:hover {
+      background-color: #f2f2f2;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="navbar">
+    <a href="home.html">Home</a>
+    <a href="contact.html">Contacts</a>
+    <a href="search.html">Search</a>
+  </div>
+
+  <div class="container">
+    <h2>Recently Deleted Contacts</h2>
+    <div id="deletedList"></div>
+  </div>
+
+  <div class="fab" id="fab">
+    <i class="fas fa-plus"></i>
+    <div class="fab-menu" id="fabMenu">
+      <button onclick="window.location.href='addcontact.html'"><i class="fas fa-user-plus"></i> Add Contact</button>
+      <button onclick="window.location.href='edit.html'"><i class="fas fa-edit"></i> Edit Contacts</button>
+      <button onclick="window.location.href='blocked.html'"><i class="fas fa-ban"></i> Blocked Contacts</button>
+      <button onclick="window.location.href='delete.html'"><i class="fas fa-trash-alt"></i> Recently Deleted</button>
+    </div>
+  </div>
+
+  <script>
+    function renderDeletedContacts() {
+      const deletedContacts = JSON.parse(localStorage.getItem('deletedContacts')) || [];
+      const list = document.getElementById('deletedList');
+      list.innerHTML = '';
+
+      if (deletedContacts.length === 0) {
+        list.innerHTML = '<p>No deleted contacts found.</p>';
+        return;
+      }
+
+      deletedContacts.forEach(contact => {
+        const item = document.createElement('div');
+        item.className = 'contact-item';
+        item.innerHTML = `
+          <strong>${contact.name}</strong><br>
+          ${contact.email}<br>
+          ${contact.phone}
+        `;
+        list.appendChild(item);
+      });
+    }
+
+    const fab = document.getElementById('fab');
+    const fabMenu = document.getElementById('fabMenu');
+
+    fab.addEventListener('click', function (e) {
+      e.stopPropagation();
+      fabMenu.style.display = fabMenu.style.display === 'flex' ? 'none' : 'flex';
+    });
+
+    window.addEventListener('click', function () {
+      fabMenu.style.display = 'none';
+    });
+
+    renderDeletedContacts();
+  </script>
+</body>
+</html>

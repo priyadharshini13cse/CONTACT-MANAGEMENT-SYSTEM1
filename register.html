@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Now</title>
+    <style>
+        body {
+            display: flex;
+            height: 100vh;
+            justify-content: center;
+            align-items: center;
+            background-image: url('https://resources.sansan.com/hubfs/Imported_Blog_Media/Contact-Management.jpg');
+            background-size: cover;
+            background-position: center;
+            margin: 0;
+        }
+        .container {
+            background-color: rgba(150, 74, 74, 0.9);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+        .container h2 {
+            margin-bottom: 20px;
+            color: white;
+        }
+        .container input[type="text"],
+        .container input[type="email"],
+        .container input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #5c002f;
+            border-radius: 4px;
+        }
+        .container .btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .container .btn:hover {
+            background-color: #218838;
+        }
+        .login-link {
+            margin-top: 10px;
+            color: white;
+        }
+        .login-link a {
+            color: #007bff;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>REGISTER NOW</h2>
+        <form action="register.php" method="POST">
+            <input type="text" name="name" placeholder="Enter your name" required>
+            <input type="email" name="email" placeholder="Enter your email" required>
+            <input type="password" name="password" placeholder="Enter your password" required>
+            <input type="password" name="confirm_password" placeholder="Confirm your password" required>
+            <button type="submit" class="btn">Register Now</button>
+        </form>
+        <div class="login-link">
+            Already have an account? <a href="login.html">Login now</a>
+        </div>
+    </div>
+</body>
+</html>

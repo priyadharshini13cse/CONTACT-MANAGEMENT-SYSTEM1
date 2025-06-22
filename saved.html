@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Saved Contacts</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #eef1f5;
+      padding: 40px;
+      margin: 0;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+
+    .contact-list {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .contact-card {
+      background: white;
+      padding: 15px 20px;
+      margin: 10px 0;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .contact-info p {
+      margin: 4px 0;
+    }
+
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 18px;
+      text-decoration: none;
+      color: #007BFF;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    .no-contacts {
+      text-align: center;
+      margin-top: 50px;
+      color: #777;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <a class="back-link" href="home.html">&larr; Back to Home</a>
+  <h1>Saved Contacts</h1>
+  <div class="contact-list" id="contactList"></div>
+
+  <script>
+    const contactList = document.getElementById('contactList');
+    const contacts = JSON.parse(localStorage.getItem('contacts')) || [];
+
+    if (contacts.length === 0) {
+      contactList.innerHTML = '<p class="no-contacts">No contacts found.</p>';
+    } else {
+      contacts.forEach(contact => {
+        const card = document.createElement('div');
+        card.className = 'contact-card';
+        card.innerHTML = `
+          <div class="contact-info">
+            <p><strong>Name:</strong> ${contact.name}</p>
+            <p><strong>Phone:</strong> ${contact.phone}</p>
+            <p><strong>Email:</strong> ${contact.email || '-'}</p>
+          </div>
+        `;
+        contactList.appendChild(card);
+      });
+    }
+  </script>
+</body>
+</html>
